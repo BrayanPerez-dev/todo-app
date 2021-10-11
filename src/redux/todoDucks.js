@@ -1,16 +1,14 @@
 import shortid from 'shortid'
 const initialState = [{
-    text: 'Redux a',
+    text: 'test a',
     completed: false,
-    created: Date.now(),
-    modified: Date.now(),
+    date:new Date(2021,10,10).getTime(),
     id: shortid.generate(),
 },
 {
-    text: 'Redux a',
+    text: 'test b',
     completed: false,
-    created: Date.now(2021,6,11),
-    modified: Date.now(2021,6,25),
+    date:new Date(2021,10,20).getTime(),
     id: shortid.generate(),
 }];
 
@@ -20,7 +18,6 @@ export const EDIT_TODO = 'EDIT_TODO';
 export const COMPLETE_TODO = 'COMPLETE_TODO';
 export const COMPLETE_ALL = 'COMPLETE_ALL';
 export const CLEAR_COMPLETED = 'CLEAR_COMPLETED';
-
 export default function todoReducer(state = initialState, action) {
 
     switch (action.type) {
@@ -28,8 +25,7 @@ export default function todoReducer(state = initialState, action) {
             return [{
                 id: shortid.generate(),
                 completed: false,
-                created: new Date().getTime(),
-                modified: new Date(2021,9,7).getTime(),
+                date: new Date().getTime(),
                 text: action.payload
             }, ...state];
         case DELETE_TODO:
@@ -39,15 +35,15 @@ export default function todoReducer(state = initialState, action) {
         case EDIT_TODO:
             return state.map(todo =>
                 todo.id === action.payload.id ?
-                    { ...todo, text: action.payload.text, modified: new Date().getTime() } : todo);
+                    { ...todo, text: action.payload.text, date: new Date().getTime() } : todo);
         case COMPLETE_TODO:
             return state.map((todo) =>
                 todo.id === action.payload ?
-                    { ...todo, completed: !todo.completed, modified:new Date().getTime()} : todo);
+                    { ...todo, completed: !todo.completed, date: new Date().getTime()} : todo);
         case COMPLETE_ALL:
             const areAllMarked = state.every(todo => todo.completed);
             return state.map(todo => {
-                return { ...todo, completed: !areAllMarked, modified: new Date().getTime()}
+                return { ...todo, completed: !areAllMarked, date: new Date().getTime()}
             })
         case CLEAR_COMPLETED:
             return state.filter(todo => todo.completed === false);
@@ -55,7 +51,6 @@ export default function todoReducer(state = initialState, action) {
             return state;
     }
 }
-
 
 export const ADDTODO = (text) => (dispatch) => {
     try {
@@ -112,6 +107,7 @@ export const COMPLETEALL = () => (dispatch) => {
 
     }
 }
+
 
 export const CLEARCOMPLETED = () => (dispatch) => {
     try {

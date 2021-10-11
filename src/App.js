@@ -5,11 +5,9 @@ const App = () => {
   const store = generateStore()
   return (
 
-    <div>
     <Provider store={store}>
        <Main/>
    </Provider>
-   </div>
   
   )
 }

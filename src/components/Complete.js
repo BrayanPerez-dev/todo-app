@@ -1,10 +1,10 @@
 import React from 'react'
-import { Checkbox, Button, Space } from 'antd';
+import { Checkbox, Button } from 'antd';
 import styled from 'styled-components'
 import 'antd/dist/antd.css';
-import {DeleteOutlined,CheckOutlined} from '@ant-design/icons';
+import {DeleteOutlined} from '@ant-design/icons';
 import { useDispatch, useSelector } from 'react-redux'
-import { DELETETODO, COMPLETETODO, COMPLETEALL, CLEARCOMPLETED } from '../redux/todoDucks'
+import { DELETETODO, COMPLETETODO, CLEARCOMPLETED } from '../redux/todoDucks'
 
 export const Complete = () => {
 
@@ -29,24 +29,17 @@ export const Complete = () => {
     }
     
 
-  const allComplete = () => {
-    dispatch(COMPLETEALL())
-    console.log(todos)
-  }
-
-
     return (
         <Wrapper>
-            <Button onClick={allComplete}><CheckOutlined />All Complete</Button>
 
             {
                 todos.filter(item => item.completed === true ).map((item, index) => (
                     <li className="list-group-item" key={index}>
                        <br/>
-                        <Space>
+                        <span className="actions">
                             <Checkbox name={item.id} checked={item.completed} defaultChecked={item.completed}  onChange={() => onChange(item.id)} />
-                            <span className="lead" style={{ marginLeft: 20 }}><b style={{ textDecorationLine: item.completed ? 'line-through' : 'none' }} >{item.text}</b></span><Button onClick={() => deleteOne(item.id)}><DeleteOutlined /></Button>
-                        </Space>
+                            <span className="lead"><b style={{ textDecorationLine: item.completed ? 'line-through' : 'none' }} >{item.text}</b></span><Button onClick={() => deleteOne(item.id)}><DeleteOutlined /></Button>
+                        </span>
                     </li>
 
                 ))
@@ -70,5 +63,9 @@ float: right;
 margin-top:4em;
 background: #EB5757;
 border-radius: 4px;
+}
+.actions{
+    display: flex;
+    justify-content: space-between;
 }
 `

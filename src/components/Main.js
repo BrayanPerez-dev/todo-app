@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import { Checkbox, Input, Tabs, Space, Button, DatePicker } from 'antd';
 import styled from 'styled-components'
 import 'antd/dist/antd.css';
@@ -22,9 +22,10 @@ const Main = () => {
     const dispatch = useDispatch()
 
     const todos = useSelector(store => store.todos)
+    const [notes, setNotes] = useState(todos)
+
     const start = useSelector(store => store.start.created)
     const end = useSelector(store => store.end.modified)
-
 
 
     const addTask = (e) => {
@@ -76,32 +77,39 @@ const Main = () => {
         setModoEdicion(false)
     }
 
-    console.log(start)
-    console.log(end)
+
 
 
 
 
     const handledSelect = (ranges) => {
-        console.log(ranges)
-        let start
-        let end
-
-        if (ranges === null) {
-            start = new Date(2021,7,1).getTime()
-            end = new Date(2021,12,30).getTime()
-            dispatch(FILTERSTART(start))
-            dispatch(FILTEREND(end))
-           
-        } else {
-
-            start = ranges[0]._d
-            end = ranges[1]._d
-            dispatch(FILTERSTART(start.getTime()))
-            dispatch(FILTEREND(end.getTime()))
+        if(ranges !== null){
+        let start = new Date(ranges[0]._d).getTime()
+        let end = new Date(ranges[1]._d).getTime()
+        dispatch(FILTERSTART(start))
+        dispatch(FILTEREND(end))
+        }else{
+        dispatch(FILTERSTART(null))
+        dispatch(FILTEREND(null))
+        return ranges
         }
-
     }
+
+
+
+   
+
+    useEffect(() => {
+        if (start !== null && end !== null) {
+        const filtro = todos.filter((obj) => { return  start <= obj.date &&  end >= obj.date})     
+        setNotes(filtro) 
+        }else{
+        setNotes(todos)
+        }
+    }, [todos,start,end])
+
+    console.log(notes)
+
     return (
         <Wrapper>
             <div className="container">
@@ -124,22 +132,21 @@ const Main = () => {
                         </form>
                         <br />
                         <Space direction="vertical" size={12}>
-                            <Button onClick={allComplete}><CheckOutlined />All Complete</Button>
                             <Button onClick={clearFull}><ClearOutlined />Clear Complete</Button>
-
                             <RangePicker onChange={(ranges) => handledSelect(ranges)} />
                         </Space>
 
                         {
-                            todos.filter(todo => start < todo.created || end > todo.modified).map((item) => (
+                            notes.map((item) => (
                                 <li className="list-group-item" key={item.id}>
                                     <br />
-                                    <Space>
+                                    <span className="actions">
                                         <Checkbox name={item.id} checked={item.completed} defaultChecked={item.completed} onChange={() => onChange(item.id)} key={item.id} />
-                                        <span className="lead" style={{ marginLeft: 20 }}><b style={{ textDecorationLine: item.completed ? 'line-through' : 'none' }}>{item.text}</b></span>
+                                        <span className="lead" ><b style={{ textDecorationLine: item.completed ? 'line-through' : 'none' }}>{item.text}</b></span>
                                         <Button onClick={() => deleteOne(item.id)}><DeleteOutlined /></Button>
                                         <Button onClick={() => update(item)}><EditOutlined /></Button>
-                                    </Space>
+                                    </span>
+
                                 </li>
                             ))
                         }
@@ -160,8 +167,7 @@ export default Main
 
 const Wrapper = styled.div`
 
-
-display: flex;
+display: grid;
 flex-wrap: wrap ;
 justify-content:center;
 
@@ -176,7 +182,7 @@ justify-content:center;
 
 .input{
   width: auto;
-  width: 476px;
+  width: 60%;
   height: 56px;
   border: 1px solid #BDBDBD;
   box-sizing: border-box;
@@ -190,5 +196,9 @@ justify-content:center;
   background: #2F80ED;
   box-shadow: 0px 2px 6px rgba(127, 177, 243, 0.4);
   border-radius: 12px;
+}
+.actions{
+    display: flex;
+    justify-content: space-between;
 }
 `
