@@ -5,11 +5,11 @@ import 'antd/dist/antd.css';
 import Active from './Active'
 import Complete from './Complete';
 import { useDispatch, useSelector } from 'react-redux'
-import { ADDTODO, DELETETODO, COMPLETETODO, COMPLETEALL, EDITTODO, CLEARCOMPLETED } from '../redux/todoDucks'
+import { ADDTODO, DELETETODO, COMPLETETODO, EDITTODO, CLEARCOMPLETED } from '../redux/todoDucks'
 import { FILTERSTART } from '../redux/filterStart'
 import { FILTEREND } from '../redux/filterEnd'
 
-import { DeleteOutlined, EditOutlined, CheckOutlined, ClearOutlined } from '@ant-design/icons';
+import { DeleteOutlined, EditOutlined, ClearOutlined } from '@ant-design/icons';
 const Main = () => {
     const { TabPane } = Tabs;
     const { RangePicker } = DatePicker;
@@ -50,10 +50,6 @@ const Main = () => {
         dispatch(DELETETODO(id))
     }
 
-
-    const allComplete = () => {
-        dispatch(COMPLETEALL())
-    }
     const clearFull = () => {
         dispatch(CLEARCOMPLETED())
 
@@ -95,13 +91,18 @@ const Main = () => {
         }
     }
 
+    useEffect(() => {
+        dispatch(FILTERSTART(null))
+        dispatch(FILTEREND(null))
+    }, [dispatch])
+
 
 
    
 
     useEffect(() => {
         if (start !== null && end !== null) {
-        const filtro = todos.filter((obj) => { return  start <= obj.date &&  end >= obj.date})     
+        const filtro = todos.filter((obj) =>  start <= obj.date &&  end >= obj.date)     
         setNotes(filtro) 
         }else{
         setNotes(todos)
